@@ -1,13 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 
-import EmonFeeder
 import time
 import urllib.parse
 import urllib.request
 import random
 
-DSP_OUTLET_IP = '10.1.2.200'
+DSP_OUTLET_IP = '192.168.11.7'
 UPDATE_INTERVAL = 5
 
 class DSPInterface(object):
@@ -29,7 +28,9 @@ class DSPInterface(object):
 		retVal = None
 
 		for line in lines:
+#			print(line)  # see what lines look like
 			if line.startswith("Meter Watt:"):
+				print(line)
 				power = line.split()[-1]
 				if retVal:
 					raise ValueError("Two power readings in one response?")
@@ -46,15 +47,6 @@ class DSPInterface(object):
 if __name__ == "__main__":
 	print("Starting")
 
-
-	apiKey = open("../emoncmsApiKey.conf", "r").read()
-
-	monBuf = EmonFeeder.EmonFeeder(protocol = 'https://',
-							  domain = '10.1.1.39',
-							  path = '/emoncms',
-							  apikey = apiKey,
-							  period = 15)
-
 	outlet = DSPInterface(DSP_OUTLET_IP)
 	print("Plug opened. Handle = %s" % outlet)
 
@@ -65,13 +57,12 @@ if __name__ == "__main__":
 			powerReading = outlet.getReading()
 
 			if powerReading:
-				print("Have data! Ready to send")
-				monBuf.add_data(["2", 0, powerReading])
-				monBuf.send_data()
+				print(powerReading)
+
 		except:
 			raise
 
 		while time.time() < nextRun:
 			time.sleep(1)
 		nextRun += UPDATE_INTERVAL
-		print("LOOPIN")
+#		print("LOOPIN")
