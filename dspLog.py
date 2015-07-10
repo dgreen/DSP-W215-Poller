@@ -25,22 +25,15 @@ class DSPInterface(object):
 		ret = ret.strip()
 		lines = ret.split("\n")
 
-		retVal = None
+		power = None
 
 		for line in lines:
 #			print(line)  # see what lines look like
 			if line.startswith("Meter Watt:"):
-				print(line)
-				power = line.split()[-1]
-				if retVal:
-					raise ValueError("Two power readings in one response?")
-				try:
-					retVal = float(power)
-				except ValueError:
-					print("Error on string '%s'" % line)
-					return None
+#				print(line)
+				power = line.split(":")[1]
 
-		return retVal
+		return power
 
 
 
